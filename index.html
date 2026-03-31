@@ -156,7 +156,7 @@
 <body>
 
 <header class="site-header">
-  <img src="IIUM.png" alt="IIUM Logo" class="iium-logo" onerror="this.style.display='none';document.getElementById('iium-fallback').style.display='flex'">
+  <img src="IIUM.png" alt="IIUM Logo" class="iium-logo" id="iiumLogo">
   <div id="iium-fallback" class="iium-fallback">IIUM</div>
   <div class="header-text">
     <h1>Convergence Insufficiency Study</h1>
@@ -170,7 +170,6 @@
   <span class="progress-pct" id="progressPct">0%</span>
 </div>
 
-<!-- SCREEN 0: WELCOME -->
 <div class="screen active" id="screen-0"><div class="screen-inner">
 <div class="card">
   <div class="card-header">
@@ -194,7 +193,7 @@
     <div class="person"><div class="avatar">NW</div><div><div class="pname">Asst. Prof. Dr. Noor Wafirah Shafee</div><div class="ptitle">Supervisor</div></div></div>
     <div class="person"><div class="avatar">IZ</div><div><div class="pname">Asst. Prof. Dr. Ilyanoon Zahari</div><div class="ptitle">Supervisor</div></div></div>
     <div class="person"><div class="avatar">MZ</div><div><div class="pname">Prof. Dr. Mohd Zulfaezal Che Azemin</div><div class="ptitle">Supervisor</div></div></div>
-    <div class="email-row">📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fb88829a9d928ad5939a90929692bb97928d9ed592928e96d59e9f8ed59682">[email&#160;protected]</a></div>
+    <div class="email-row">📧 syafiq.hakimi&#64;live.iium.edu.my</div>
   </div>
   <div class="info-block">
     <h3>Privacy & Confidentiality</h3>
@@ -206,11 +205,10 @@
       <li>This study has been approved by the <strong>IIUM Research Ethics Committee (IREC-2025-87)</strong>.</li>
     </ul>
   </div>
-  <div class="btn-row"><button class="btn btn-primary" onclick="goScreen(1)">Begin Survey &rarr;</button></div>
+  <div class="btn-row"><button class="btn btn-primary" id="btnBegin">Begin Survey &rarr;</button></div>
 </div>
 </div></div>
 
-<!-- SCREEN 1: CONSENT -->
 <div class="screen" id="screen-1"><div class="screen-inner">
 <div class="card">
   <div class="card-header">
@@ -228,16 +226,15 @@
       <li>You understand that participation is voluntary and you may withdraw at any time.</li>
     </ul>
   </div>
-  <label class="check-label"><input type="checkbox" id="cb1" onchange="updateConsent()"><div class="check-box"></div><span class="check-text">I agree to participate in this pre-screening survey and provide my contact details for follow-up.</span></label>
-  <label class="check-label"><input type="checkbox" id="cb2" onchange="updateConsent()"><div class="check-box"></div><span class="check-text">I confirm that I meet the eligibility criteria for this study.</span></label>
+  <label class="check-label"><input type="checkbox" id="cb1"><div class="check-box"></div><span class="check-text">I agree to participate in this pre-screening survey and provide my contact details for follow-up.</span></label>
+  <label class="check-label"><input type="checkbox" id="cb2"><div class="check-box"></div><span class="check-text">I confirm that I meet the eligibility criteria for this study.</span></label>
   <div class="btn-row">
-    <button class="btn btn-secondary" onclick="goScreen(0)">&larr; Back</button>
-    <button class="btn btn-primary" id="btnConsentNext" onclick="goScreen(2)" disabled>I Agree &amp; Continue &rarr;</button>
+    <button class="btn btn-secondary" id="btnConsentBack">&larr; Back</button>
+    <button class="btn btn-primary" id="btnConsentNext" disabled>I Agree &amp; Continue &rarr;</button>
   </div>
 </div>
 </div></div>
 
-<!-- SCREEN 2: CONTACT INFO -->
 <div class="screen" id="screen-2"><div class="screen-inner">
 <div class="card">
   <div class="card-header">
@@ -256,7 +253,7 @@
   </div>
   <div class="form-group">
     <label>Phone Number <span class="req">*</span></label>
-    <input type="tel" id="f_phone" placeholder="e.g. 0123456789" maxlength="15" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+    <input type="tel" id="f_phone" placeholder="e.g. 0123456789" maxlength="15">
     <div class="input-hint">Numbers only, without dashes. Example: 0123456789</div>
     <div class="field-error" id="err_phone">Please enter a valid phone number (numbers only, min. 9 digits).</div>
   </div>
@@ -273,13 +270,12 @@
     </div>
   </div>
   <div class="btn-row">
-    <button class="btn btn-secondary" onclick="goScreen(1)">&larr; Back</button>
-    <button class="btn btn-primary" onclick="goSurvey()">Next: CISS Survey &rarr;</button>
+    <button class="btn btn-secondary" id="btnContactBack">&larr; Back</button>
+    <button class="btn btn-primary" id="btnGoSurvey">Next: CISS Survey &rarr;</button>
   </div>
 </div>
 </div></div>
 
-<!-- SCREEN 3: CISS SURVEY -->
 <div class="screen" id="screen-3"><div class="screen-inner" id="surveyInner">
 <div class="card" style="border-top-color:var(--green)">
   <div class="card-header">
@@ -297,13 +293,12 @@
 <div id="questionsContainer"></div>
 <div style="max-width:680px;margin:0 auto 28px;padding:0 12px;">
   <div class="btn-row">
-    <button class="btn btn-secondary" onclick="goScreen(2)">&larr; Back</button>
-    <button class="btn btn-primary" onclick="submitSurvey()">Submit Survey</button>
+    <button class="btn btn-secondary" id="btnSurveyBack">&larr; Back</button>
+    <button class="btn btn-primary" id="btnSubmit">Submit Survey</button>
   </div>
 </div>
 </div></div>
 
-<!-- SCREEN 4: RESULT -->
 <div class="screen" id="screen-4"><div class="screen-inner">
 <div class="card">
   <div class="card-header">
@@ -327,7 +322,7 @@
     <p id="nextStepsMsg"></p>
   </div>
   <div class="btn-row">
-    <button class="btn btn-secondary" onclick="window.location.reload()">Start New Response</button>
+    <button class="btn btn-secondary" id="btnRestart">Start New Response</button>
   </div>
 </div>
 </div></div>
@@ -338,8 +333,7 @@
 </div>
 <div class="toast" id="toast"></div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// ── PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE ──
+<script>
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyZWEjSuhP5Q8HPW-hieMKxtT8AizoIpOA4EE5IbUK-CjqiZchynP3b4Ucj4EihcF9_/exec';
 
 const QUESTIONS = [
@@ -405,10 +399,43 @@ function goSurvey() {
     err.classList.toggle('show', !ok);
     if (!ok) valid = false;
   });
-  if (!valid) return;
+  if (!valid) {
+    const firstErr = document.querySelector('.field-error.show');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
   renderQuestions();
   goScreen(3);
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Logo fallback
+  var logo = document.getElementById('iiumLogo');
+  if (logo) {
+    logo.addEventListener('error', function() {
+      logo.style.display = 'none';
+      document.getElementById('iium-fallback').style.display = 'flex';
+    });
+  }
+  // Screen 0
+  document.getElementById('btnBegin').addEventListener('click', function() { goScreen(1); });
+  // Screen 1 - consent
+  document.getElementById('cb1').addEventListener('change', updateConsent);
+  document.getElementById('cb2').addEventListener('change', updateConsent);
+  document.getElementById('btnConsentBack').addEventListener('click', function() { goScreen(0); });
+  document.getElementById('btnConsentNext').addEventListener('click', function() { goScreen(2); });
+  // Screen 2 - contact
+  document.getElementById('f_phone').addEventListener('input', function() {
+    this.value = this.value.replace(/[^0-9]/g, '');
+  });
+  document.getElementById('btnContactBack').addEventListener('click', function() { goScreen(1); });
+  document.getElementById('btnGoSurvey').addEventListener('click', goSurvey);
+  // Screen 3 - survey
+  document.getElementById('btnSurveyBack').addEventListener('click', function() { goScreen(2); });
+  document.getElementById('btnSubmit').addEventListener('click', submitSurvey);
+  // Screen 4 - result
+  document.getElementById('btnRestart').addEventListener('click', function() { window.location.reload(); });
+});
 
 function renderQuestions() {
   const c = document.getElementById('questionsContainer');
@@ -422,12 +449,18 @@ function renderQuestions() {
       <div class="likert-row">
         ${[0,1,2,3,4].map(v => `
           <label class="likert-option">
-            <input type="radio" name="q${i}" value="${v}" onchange="responses[${i}]=${v}">
+            <input type="radio" name="q${i}" value="${v}" data-qi="${i}" data-val="${v}">
             <div class="likert-btn">${v}<span class="sub">${LABELS[v]}</span></div>
           </label>`).join('')}
       </div>
       <div class="field-error" id="qerr${i}">Please select a response.</div>`;
     c.appendChild(div);
+  });
+  // attach listeners after render
+  c.querySelectorAll('input[type=radio]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      responses[parseInt(this.dataset.qi)] = parseInt(this.dataset.val);
+    });
   });
 }
 
@@ -495,4 +528,17 @@ function showResult(score) {
     const v = responses[i];
     return `<div class="breakdown-item">
       <span class="q-label">Q${i+1}: ${q.length > 55 ? q.substring(0,55)+'...' : q}</span>
-      <span class="q-score ${v===0?'zero':''}"
+      <span class="q-score ${v===0?'zero':''}">${v}</span>
+    </div>`;
+  }).join('');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => { toast.classList.remove('show'); }, 3000);
+}
+</script>
+</body>
+</html>
