@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CISS Pre-Screening Survey</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green:    #1a5c38;
+    --green-d:  #0f3d25;
+    --green-l:  #236b43;
+    --gold:     #c9a84c;
+    --gold-l:   #e2c270;
+    --gold-d:   #a8862d;
+    --cream:    #faf8f3;
+    --white:    #ffffff;
+    --gray-50:  #f9f9f7;
+    --gray-100: #f0ede5;
+    --gray-200: #ddd9cc;
+    --gray-400: #9b9485;
+    --gray-600: #5c5848;
+    --gray-800: #2e2b24;
+    --radius:   12px;
+    --shadow:   0 4px 24px rgba(15,61,37,0.10);
+    --shadow-lg:0 12px 48px rgba(15,61,37,0.16);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--gray-800); min-height: 100vh; font-size: 16px; }
+
+  .site-header {
+    background: var(--green-d); padding: 14px 24px;
+    display: flex; align-items: center; gap: 14px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .iium-logo { width: 46px; height: 46px; border-radius: 50%; object-fit: contain; background: var(--white); padding: 3px; flex-shrink: 0; }
+  .iium-fallback { display:none; width:46px; height:46px; border-radius:50%; background:var(--gold); align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--green-d); flex-shrink:0; }
+  .header-text h1 { font-size: 15px; font-weight: 700; color: var(--white); line-height: 1.3; }
+  .header-text p { font-size: 11px; color: var(--gold-l); margin-top: 2px; font-weight: 400; }
+
+  .progress-wrap { background: var(--green); padding: 10px 24px; display: flex; align-items: center; gap: 12px; }
+  .progress-label { font-size: 12px; color: var(--gold-l); min-width: 90px; font-weight: 600; }
+  .progress-track { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--gold); border-radius: 99px; transition: width 0.5s cubic-bezier(.4,0,.2,1); width: 0%; }
+  .progress-pct { font-size: 12px; color: var(--gold-l); font-weight: 700; min-width: 32px; text-align: right; }
+
+  .screen { display: none; animation: fadeUp .35s ease both; }
+  .screen.active { display: block; }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
+
+  .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); max-width: 680px; margin: 28px auto; padding: 36px 32px; border-top: 4px solid var(--gold); }
+  @media(max-width:600px){ .card { margin: 16px 12px; padding: 24px 18px; } }
+
+  .card-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--gray-100); }
+  .card-icon { width: 42px; height: 42px; flex-shrink: 0; background: var(--green); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--gold); font-weight: 700; letter-spacing: 0.5px; }
+  .card-header h2 { font-size: 21px; font-weight: 700; color: var(--green-d); line-height: 1.3; }
+  .card-header p { font-size: 13px; color: var(--gray-600); margin-top: 3px; font-weight: 400; }
+
+  .info-block { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 10px; padding: 18px 20px; margin-bottom: 18px; font-size: 14px; color: var(--gray-600); line-height: 1.7; }
+  .info-block h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--green); margin-bottom: 10px; }
+  .info-block ul { padding-left: 16px; margin-top: 6px; }
+  .info-block ul li { margin-bottom: 5px; }
+  .info-block strong { color: var(--gray-800); }
+
+  .eligibility-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+  @media(max-width:480px){ .eligibility-grid { grid-template-columns: 1fr; } }
+  .elig-item { background: var(--green); border-radius: 8px; padding: 11px 14px; font-size: 13px; font-weight: 500; color: var(--white); display: flex; align-items: center; gap: 8px; }
+  .elig-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
+  .supervisor-box { background: linear-gradient(135deg, var(--green-d) 0%, var(--green) 100%); border-radius: 10px; padding: 18px 20px; margin-bottom: 18px; color: var(--white); }
+  .supervisor-box h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--gold-l); margin-bottom: 12px; font-weight: 700; }
+  .supervisor-box .person { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .supervisor-box .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--green-d); flex-shrink: 0; }
+  .supervisor-box .pname { font-size: 13px; font-weight: 600; }
+  .supervisor-box .ptitle { font-size: 11px; color: rgba(255,255,255,0.60); font-weight: 400; }
+  .supervisor-box .email-row { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.15); font-size: 12px; color: var(--gold-l); font-weight: 500; }
+
+  .form-group { margin-bottom: 18px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--green-d); margin-bottom: 6px; }
+  .form-group label .req { color: var(--gold-d); margin-left: 3px; }
+  .form-group label .opt { font-size: 11px; color: var(--gray-400); font-weight: 400; margin-left: 5px; }
+  .form-group input, .form-group select { width: 100%; padding: 11px 13px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--gray-800); background: var(--white); transition: border-color .2s, box-shadow .2s; outline: none; -webkit-appearance: none; }
+  .form-group input:focus, .form-group select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,92,56,0.10); }
+  .form-group input.error { border-color: #c0392b; }
+  .input-hint { font-size: 11px; color: var(--gray-400); margin-top: 4px; font-weight: 400; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width:480px){ .form-row { grid-template-columns: 1fr; } }
+
+  .q-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); max-width: 680px; margin: 16px auto; padding: 24px 28px 22px; border-left: 4px solid var(--gold); }
+  @media(max-width:600px){ .q-card { margin: 10px 12px; padding: 18px 14px; } }
+  .q-num { display: inline-flex; align-items: center; background: var(--green); color: var(--white); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; padding: 3px 10px; border-radius: 99px; margin-bottom: 10px; }
+  .q-text { font-size: 15px; font-weight: 500; color: var(--gray-800); line-height: 1.6; margin-bottom: 18px; }
+
+  .likert-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .likert-option { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
+  .likert-option input[type=radio] { display: none; }
+  .likert-btn { width: 46px; height: 46px; border: 2px solid var(--gray-200); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: var(--gray-400); transition: all .16s; background: var(--white); line-height: 1; font-family: 'DM Sans', sans-serif; }
+  .likert-btn .sub { font-size: 8px; font-weight: 500; color: var(--gray-400); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .likert-option input:checked + .likert-btn { background: var(--green); border-color: var(--green); color: var(--white); box-shadow: 0 4px 14px rgba(26,92,56,0.28); transform: translateY(-2px); }
+  .likert-option input:checked + .likert-btn .sub { color: rgba(255,255,255,0.70); }
+  .likert-option:hover .likert-btn { border-color: var(--green-l); color: var(--green); background: rgba(26,92,56,0.05); }
+  @media(max-width:480px){ .likert-row { gap: 5px; } .likert-btn { width: 40px; height: 40px; font-size: 14px; } .likert-btn .sub { display: none; } }
+
+  .btn-row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; flex-wrap: wrap; }
+  .btn { padding: 11px 26px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all .16s; display: inline-flex; align-items: center; gap: 7px; }
+  .btn-primary { background: var(--green); color: var(--white); box-shadow: 0 3px 10px rgba(26,92,56,0.28); }
+  .btn-primary:hover { background: var(--green-l); transform: translateY(-1px); }
+  .btn-secondary { background: transparent; color: var(--green); border: 1.5px solid var(--green); }
+  .btn-secondary:hover { background: rgba(26,92,56,0.05); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; transform: none !important; }
+
+  .check-label { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: 10px; border: 1.5px solid var(--gray-200); cursor: pointer; transition: border-color .18s, background .18s; margin-bottom: 14px; }
+  .check-label:hover { border-color: var(--green); background: rgba(26,92,56,0.03); }
+  .check-label input { display: none; }
+  .check-box { width: 21px; height: 21px; flex-shrink: 0; border: 2px solid var(--gray-200); border-radius: 6px; background: var(--white); display: flex; align-items: center; justify-content: center; transition: all .16s; margin-top: 1px; }
+  .check-label input:checked ~ .check-box { background: var(--green); border-color: var(--green); }
+  .check-label input:checked ~ .check-box::after { content: ''; display: block; width: 5px; height: 9px; border: 2px solid white; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); }
+  .check-text { font-size: 13px; color: var(--gray-600); line-height: 1.65; font-weight: 400; }
+
+  .score-circle-wrap { text-align: center; margin: 24px 0; }
+  .score-circle { width: 130px; height: 130px; border-radius: 50%; background: var(--green-d); margin: 0 auto 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(15,61,37,0.28); position: relative; }
+  .score-circle::before { content: ''; position: absolute; inset: 8px; border-radius: 50%; border: 2px solid var(--gold); opacity: 0.5; }
+  .score-num { font-size: 46px; font-weight: 700; color: var(--gold); line-height: 1; }
+  .score-max { font-size: 12px; color: rgba(255,255,255,0.45); font-weight: 400; }
+
+  .result-badge { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; border-radius: 99px; font-size: 13px; font-weight: 600; margin-bottom: 14px; }
+  .result-badge .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink:0; }
+  .result-badge.positive { background: rgba(192,57,43,0.09); color: #b03426; border: 1.5px solid rgba(192,57,43,0.25); }
+  .result-badge.positive .dot { background: #c0392b; }
+  .result-badge.negative { background: rgba(26,92,56,0.09); color: var(--green-d); border: 1.5px solid rgba(26,92,56,0.25); }
+  .result-badge.negative .dot { background: var(--green); }
+  .result-msg { font-size: 14px; color: var(--gray-600); line-height: 1.75; text-align: center; max-width: 420px; margin: 0 auto 22px; font-weight: 400; }
+
+  .score-breakdown { background: var(--gray-50); border-radius: 10px; padding: 16px; margin-bottom: 18px; }
+  .score-breakdown h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.9px; color: var(--gray-400); margin-bottom: 10px; font-weight: 700; }
+  .breakdown-item { display: flex; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--gray-100); font-size: 13px; gap: 10px; }
+  .breakdown-item:last-child { border-bottom: none; }
+  .breakdown-item .q-label { flex: 1; color: var(--gray-600); font-weight: 400; }
+  .breakdown-item .q-score { width: 26px; height: 26px; border-radius: 6px; background: var(--green); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .breakdown-item .q-score.zero { background: var(--gray-200); color: var(--gray-600); }
+
+  .overlay { position: fixed; inset: 0; background: rgba(15,61,37,0.55); display: none; align-items: center; justify-content: center; z-index: 200; flex-direction: column; gap: 16px; }
+  .overlay.show { display: flex; }
+  .spinner { width: 44px; height: 44px; border: 4px solid rgba(255,255,255,0.25); border-top-color: var(--gold); border-radius: 50%; animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .overlay-msg { color: white; font-size: 15px; font-weight: 600; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--green-d); color: white; padding: 11px 22px; border-radius: 99px; font-size: 13px; font-weight: 500; box-shadow: var(--shadow-lg); z-index: 999; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; }
+  .field-error { font-size: 12px; color: #c0392b; margin-top: 4px; display: none; font-weight: 500; }
+  .field-error.show { display: block; }
+  .screen-inner { padding-bottom: 48px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <img src="IIUM.png" alt="IIUM Logo" class="iium-logo" id="iiumLogo">
+  <div id="iium-fallback" class="iium-fallback">IIUM</div>
+  <div class="header-text">
+    <h1>Convergence Insufficiency Study</h1>
+    <p>Pre-Screening Survey</p>
+  </div>
+</header>
+
+<div class="progress-wrap" id="progressWrap" style="display:none">
+  <span class="progress-label" id="progressLabel">Step 1 of 4</span>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <span class="progress-pct" id="progressPct">0%</span>
+</div>
+
+<div class="screen active" id="screen-0"><div class="screen-inner">
+<div class="card">
+  <div class="card-header">
+    <div class="card-icon">CI</div>
+    <div><h2>Pre-Screening Survey</h2><p>Convergence Insufficiency Symptom Survey (CISS)</p></div>
+  </div>
+  <div class="info-block">
+    <h3>Research Overview</h3>
+    <p><strong>Title:</strong> Comparative Effectiveness of Dichoptic Versus Pencil Push-Up Therapy in Managing Symptomatic Convergence Insufficiency</p>
+    <p style="margin-top:8px">This pre-screening survey identifies students who may have symptoms of Convergence Insufficiency (CI) using the validated CISS tool. It will take approximately <strong>2 minutes</strong>.</p>
+  </div>
+  <div class="eligibility-grid">
+    <div class="elig-item"><div class="elig-dot"></div>Malaysian Nationality</div>
+    <div class="elig-item"><div class="elig-dot"></div>Aged 18–30 Years</div>
+    <div class="elig-item"><div class="elig-dot"></div>No Diagnosed Ocular Diseases</div>
+    <div class="elig-item"><div class="elig-dot"></div>No Prior Strabismus Surgery</div>
+  </div>
+  <div class="supervisor-box">
+    <h3>Research Team</h3>
+    <div class="person"><div class="avatar">MS</div><div><div class="pname">Muhammad Syafiq Hakimi bin Osman</div><div class="ptitle">Master's Student (Principal Researcher)</div></div></div>
+    <div class="person"><div class="avatar">NW</div><div><div class="pname">Asst. Prof. Dr. Noor Wafirah Shafee</div><div class="ptitle">Supervisor</div></div></div>
+    <div class="person"><div class="avatar">IZ</div><div><div class="pname">Asst. Prof. Dr. Ilyanoon Zahari</div><div class="ptitle">Supervisor</div></div></div>
+    <div class="person"><div class="avatar">MZ</div><div><div class="pname">Prof. Dr. Mohd Zulfaezal Che Azemin</div><div class="ptitle">Supervisor</div></div></div>
+    <div class="email-row">📧 syafiq.hakimi&#64;live.iium.edu.my</div>
+  </div>
+  <div class="info-block">
+    <h3>Privacy & Confidentiality</h3>
+    <ul>
+      <li>Your participation is <strong>voluntary</strong>. You may stop at any time.</li>
+      <li>Contact information is stored <strong>separately</strong> from your survey responses.</li>
+      <li>CISS responses will <strong>not</strong> be linked to your identity during analysis.</li>
+      <li>If you are eligible, you will be assigned a <strong>study code (e.g., P01)</strong> to ensure anonymity.</li>
+      <li>This study has been approved by the <strong>IIUM Research Ethics Committee (IREC-2025-87)</strong>.</li>
+    </ul>
+  </div>
+  <div class="btn-row"><button class="btn btn-primary" id="btnBegin">Begin Survey &rarr;</button></div>
+</div>
+</div></div>
+
+<div class="screen" id="screen-1"><div class="screen-inner">
+<div class="card">
+  <div class="card-header">
+    <div class="card-icon">OK</div>
+    <div><h2>Consent Statement</h2><p>Please read carefully before proceeding</p></div>
+  </div>
+  <div class="info-block">
+    <h3>Informed Consent</h3>
+    <p>By proceeding with this survey, you confirm that:</p>
+    <ul style="margin-top:8px">
+      <li>You have read and understood the study details provided.</li>
+      <li>You meet the eligibility criteria (Malaysian, aged 18–30, no ocular disease history).</li>
+      <li>You consent to participate in this pre-screening survey.</li>
+      <li>You agree to provide your contact details for follow-up if eligible.</li>
+      <li>You understand that participation is voluntary and you may withdraw at any time.</li>
+    </ul>
+  </div>
+  <label class="check-label"><input type="checkbox" id="cb1"><div class="check-box"></div><span class="check-text">I agree to participate in this pre-screening survey and provide my contact details for follow-up.</span></label>
+  <label class="check-label"><input type="checkbox" id="cb2"><div class="check-box"></div><span class="check-text">I confirm that I meet the eligibility criteria for this study.</span></label>
+  <div class="btn-row">
+    <button class="btn btn-secondary" id="btnConsentBack">&larr; Back</button>
+    <button class="btn btn-primary" id="btnConsentNext" disabled>I Agree &amp; Continue &rarr;</button>
+  </div>
+</div>
+</div></div>
+
+<div class="screen" id="screen-2"><div class="screen-inner">
+<div class="card">
+  <div class="card-header">
+    <div class="card-icon">A</div>
+    <div><h2>Section A — Contact Information</h2><p>For follow-up if you are eligible. Stored separately from your responses.</p></div>
+  </div>
+  <div class="form-group">
+    <label>Full Name <span class="req">*</span></label>
+    <input type="text" id="f_name" placeholder="e.g. Ahmad bin Abdullah">
+    <div class="field-error" id="err_name">Please enter your full name.</div>
+  </div>
+  <div class="form-group">
+    <label>Email Address <span class="opt">(Optional)</span></label>
+    <input type="email" id="f_email" placeholder="e.g. ahmad@student.iium.edu.my">
+    <div class="field-error" id="err_email">Please enter a valid email address.</div>
+  </div>
+  <div class="form-group">
+    <label>Phone Number <span class="req">*</span></label>
+    <input type="tel" id="f_phone" placeholder="e.g. 0123456789" maxlength="15">
+    <div class="input-hint">Numbers only, without dashes. Example: 0123456789</div>
+    <div class="field-error" id="err_phone">Please enter a valid phone number (numbers only, min. 9 digits).</div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label>Age Group <span class="req">*</span></label>
+      <select id="f_age"><option value="">— Select —</option><option>18–21</option><option>22–25</option><option>26–30</option><option>More than 30</option></select>
+      <div class="field-error" id="err_age">Please select your age group.</div>
+    </div>
+    <div class="form-group">
+      <label>University/University College <span class="req">*</span></label>
+      <select id="f_kuliyyah"><option value="">— Select —</option><option>IIUM</option><option>Vision University College</option><option>Others</option></select>
+      <div class="field-error" id="err_kuliyyah">Please select your University/University College.</div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" id="btnContactBack">&larr; Back</button>
+    <button class="btn btn-primary" id="btnGoSurvey">Next: CISS Survey &rarr;</button>
+  </div>
+</div>
+</div></div>
+
+<div class="screen" id="screen-3"><div class="screen-inner" id="surveyInner">
+<div class="card" style="border-top-color:var(--green)">
+  <div class="card-header">
+    <div class="card-icon">B</div>
+    <div><h2>Section B — CISS Survey</h2><p>Rate how frequently each symptom occurs during reading or close work.</p></div>
+  </div>
+  <div style="display:flex;gap:7px;flex-wrap:wrap;">
+    <span style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:6px;padding:4px 11px;font-size:12px;color:var(--gray-600);font-weight:500;">0 = Never</span>
+    <span style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:6px;padding:4px 11px;font-size:12px;color:var(--gray-600);font-weight:500;">1 = Infrequently</span>
+    <span style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:6px;padding:4px 11px;font-size:12px;color:var(--gray-600);font-weight:500;">2 = Sometimes</span>
+    <span style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:6px;padding:4px 11px;font-size:12px;color:var(--gray-600);font-weight:500;">3 = Fairly Often</span>
+    <span style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:6px;padding:4px 11px;font-size:12px;color:var(--gray-600);font-weight:500;">4 = Always</span>
+  </div>
+</div>
+<div id="questionsContainer"></div>
+<div style="max-width:680px;margin:0 auto 28px;padding:0 12px;">
+  <div class="btn-row">
+    <button class="btn btn-secondary" id="btnSurveyBack">&larr; Back</button>
+    <button class="btn btn-primary" id="btnSubmit">Submit Survey</button>
+  </div>
+</div>
+</div></div>
+
+<div class="screen" id="screen-4"><div class="screen-inner">
+<div class="card">
+  <div class="card-header">
+    <div class="card-icon">R</div>
+    <div><h2>Your CISS Result</h2><p>Pre-screening completed — Thank you for your participation.</p></div>
+  </div>
+  <div class="score-circle-wrap">
+    <div class="score-circle">
+      <div class="score-num" id="resultNum">0</div>
+      <div class="score-max">out of 60</div>
+    </div>
+    <div id="resultBadge"></div>
+    <p class="result-msg" id="resultMsg"></p>
+  </div>
+  <div class="score-breakdown">
+    <h3>Response Breakdown</h3>
+    <div id="breakdownList"></div>
+  </div>
+  <div class="info-block">
+    <h3>What Happens Next?</h3>
+    <p id="nextStepsMsg"></p>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" id="btnRestart">Start New Response</button>
+  </div>
+</div>
+</div></div>
+
+<div class="overlay" id="overlay">
+  <div class="spinner"></div>
+  <div class="overlay-msg">Submitting your response...</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyZWEjSuhP5Q8HPW-hieMKxtT8AizoIpOA4EE5IbUK-CjqiZchynP3b4Ucj4EihcF9_/exec';
+
+const QUESTIONS = [
+  "Do your eyes feel tired when reading or doing close work?",
+  "Do your eyes feel uncomfortable when reading or doing close work?",
+  "Do you have headaches when reading or doing close work?",
+  "Do you feel sleepy when reading or doing close work?",
+  "Do you lose concentration when reading or doing close work?",
+  "Do you have trouble remembering what you have read?",
+  "Do you have double vision when reading or doing close work?",
+  "Do you see the words move, jump, swim or appear to float on the page when reading or doing close work?",
+  "Do you feel like you read slowly?",
+  "Do your eyes ever hurt when reading or doing close work?",
+  "Do your eyes ever feel sore when reading or doing close work?",
+  'Do you feel a "pulling" feeling around your eyes when reading or doing close work?',
+  "Do you notice the words blurring or coming in and out of focus when reading or doing close work?",
+  "Do you lose your place while reading or doing close work?",
+  "Do you have to re-read the same lines of words when reading?"
+];
+
+const LABELS = ['Never','Infreq.','Sometimes','F. Often','Always'];
+let responses = {};
+
+function goScreen(n) {
+  document.querySelectorAll('.screen').forEach((s,i) => s.classList.toggle('active', i===n));
+  const wrap = document.getElementById('progressWrap');
+  if (n === 0) { wrap.style.display = 'none'; }
+  else {
+    wrap.style.display = 'flex';
+    const pct = Math.round((n / 4) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct + '%';
+    document.getElementById('progressLabel').textContent = 'Step ' + n + ' of 4';
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateConsent() {
+  const ok = document.getElementById('cb1').checked && document.getElementById('cb2').checked;
+  document.getElementById('btnConsentNext').disabled = !ok;
+}
+
+function goSurvey() {
+  let valid = true;
+  const emailVal = document.getElementById('f_email').value.trim();
+  const emailErr = document.getElementById('err_email');
+  const emailEl  = document.getElementById('f_email');
+  if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+    emailEl.classList.add('error'); emailErr.classList.add('show'); valid = false;
+  } else { emailEl.classList.remove('error'); emailErr.classList.remove('show'); }
+
+  const fields = [
+    { id: 'f_name',     err: 'err_name',     test: v => v.trim().length > 1 },
+    { id: 'f_phone',    err: 'err_phone',     test: v => /^\d{9,15}$/.test(v.trim()) },
+    { id: 'f_age',      err: 'err_age',       test: v => v !== '' },
+    { id: 'f_kuliyyah', err: 'err_kuliyyah',  test: v => v !== '' },
+  ];
+  fields.forEach(f => {
+    const el = document.getElementById(f.id);
+    const err = document.getElementById(f.err);
+    const ok = f.test(el.value);
+    el.classList.toggle('error', !ok);
+    err.classList.toggle('show', !ok);
+    if (!ok) valid = false;
+  });
+  if (!valid) {
+    const firstErr = document.querySelector('.field-error.show');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  renderQuestions();
+  goScreen(3);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Logo fallback
+  var logo = document.getElementById('iiumLogo');
+  if (logo) {
+    logo.addEventListener('error', function() {
+      logo.style.display = 'none';
+      document.getElementById('iium-fallback').style.display = 'flex';
+    });
+  }
+  // Screen 0
+  document.getElementById('btnBegin').addEventListener('click', function() { goScreen(1); });
+  // Screen 1 - consent
+  document.getElementById('cb1').addEventListener('change', updateConsent);
+  document.getElementById('cb2').addEventListener('change', updateConsent);
+  document.getElementById('btnConsentBack').addEventListener('click', function() { goScreen(0); });
+  document.getElementById('btnConsentNext').addEventListener('click', function() { goScreen(2); });
+  // Screen 2 - contact
+  document.getElementById('f_phone').addEventListener('input', function() {
+    this.value = this.value.replace(/[^0-9]/g, '');
+  });
+  document.getElementById('btnContactBack').addEventListener('click', function() { goScreen(1); });
+  document.getElementById('btnGoSurvey').addEventListener('click', goSurvey);
+  // Screen 3 - survey
+  document.getElementById('btnSurveyBack').addEventListener('click', function() { goScreen(2); });
+  document.getElementById('btnSubmit').addEventListener('click', submitSurvey);
+  // Screen 4 - result
+  document.getElementById('btnRestart').addEventListener('click', function() { window.location.reload(); });
+});
+
+function renderQuestions() {
+  const c = document.getElementById('questionsContainer');
+  c.innerHTML = '';
+  QUESTIONS.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'q-card';
+    div.innerHTML = `
+      <div class="q-num">Q${i+1} / 15</div>
+      <div class="q-text">${q}</div>
+      <div class="likert-row">
+        ${[0,1,2,3,4].map(v => `
+          <label class="likert-option">
+            <input type="radio" name="q${i}" value="${v}" data-qi="${i}" data-val="${v}">
+            <div class="likert-btn">${v}<span class="sub">${LABELS[v]}</span></div>
+          </label>`).join('')}
+      </div>
+      <div class="field-error" id="qerr${i}">Please select a response.</div>`;
+    c.appendChild(div);
+  });
+  // attach listeners after render
+  c.querySelectorAll('input[type=radio]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      responses[parseInt(this.dataset.qi)] = parseInt(this.dataset.val);
+    });
+  });
+}
+
+function submitSurvey() {
+  let valid = true;
+  QUESTIONS.forEach((_, i) => {
+    const err = document.getElementById('qerr' + i);
+    const answered = responses[i] !== undefined;
+    err.classList.toggle('show', !answered);
+    if (!answered) valid = false;
+  });
+  if (!valid) {
+    const first = document.querySelector('.field-error.show');
+    if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  const score = Object.values(responses).reduce((a, b) => a + b, 0);
+  const payload = {
+    timestamp:      new Date().toLocaleString('en-MY'),
+    name:           document.getElementById('f_name').value.trim(),
+    email:          document.getElementById('f_email').value.trim() || 'N/A',
+    phone:          document.getElementById('f_phone').value.trim(),
+    age_group:      document.getElementById('f_age').value,
+    kuliyyah:       document.getElementById('f_kuliyyah').value,
+    total_score:    score,
+    interpretation: score > 21 ? 'Likely CI (Score > 21)' : 'Unlikely CI (Score <= 21)',
+    ...Object.fromEntries(QUESTIONS.map((_, i) => [`Q${i+1}`, responses[i]]))
+  };
+  sendToSheet(payload, score);
+}
+
+async function sendToSheet(payload, score) {
+  document.getElementById('overlay').classList.add('show');
+  try {
+    await fetch(SHEET_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    document.getElementById('overlay').classList.remove('show');
+    showResult(score);
+    goScreen(4);
+  } catch (err) {
+    document.getElementById('overlay').classList.remove('show');
+    showToast('Connection error. Please try again.');
+  }
+}
+
+function showResult(score) {
+  document.getElementById('resultNum').textContent = score;
+  const badge = document.getElementById('resultBadge');
+  const msg   = document.getElementById('resultMsg');
+  const next  = document.getElementById('nextStepsMsg');
+  if (score > 21) {
+    badge.innerHTML = `<span class="result-badge positive"><span class="dot"></span>Score indicates likely Convergence Insufficiency</span>`;
+    msg.textContent = 'Your score of ' + score + ' exceeds the threshold of 21. This suggests a strong likelihood of Convergence Insufficiency. Our research team will contact you to discuss your eligibility for the study.';
+    next.textContent = 'Your contact details have been recorded. Our team will reach out via phone or email to schedule a clinical assessment and discuss participation in the intervention phase of the study.';
+  } else {
+    badge.innerHTML = `<span class="result-badge negative"><span class="dot"></span>Score is below CI threshold</span>`;
+    msg.textContent = 'Your score of ' + score + ' is below the threshold of 21, suggesting that significant CI symptoms are unlikely at this time.';
+    next.textContent = 'Thank you for completing the survey. Based on your responses, you may not meet the symptom threshold for study participation. If you have concerns about your vision, please consult an optometrist.';
+  }
+  const list = document.getElementById('breakdownList');
+  list.innerHTML = QUESTIONS.map((q, i) => {
+    const v = responses[i];
+    return `<div class="breakdown-item">
+      <span class="q-label">Q${i+1}: ${q.length > 55 ? q.substring(0,55)+'...' : q}</span>
+      <span class="q-score ${v===0?'zero':''}">${v}</span>
+    </div>`;
+  }).join('');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => { toast.classList.remove('show'); }, 3000);
+}
+</script>
+</body>
+</html>
